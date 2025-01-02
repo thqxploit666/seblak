@@ -1,17 +1,3 @@
-from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton,
-                             QLabel, QScrollArea, QCheckBox, QMessageBox, QGroupBox,
-                             QProgressBar)
-from PyQt5.QtCore import Qt, QThread, pyqtSignal
-import requests
-import json
-
-class SeoAnalyzerThread(QThread):
-    progress = pyqtSignal(int)
-    result = pyqtSignal(dict)
-    finished = pyqtSignal()
-
-    def __init__(self, url, filters, api_keys):
-        super().__init__()
         self.url = url
         self.filters = filters
         self.api_keys = api_keys
