@@ -1,0 +1,6 @@
+{
+    "seblak": {
+        "file1.py": {"size": 12345, "checksum": "abc123"},
+        "file2.py": {"size": 67890, "checksum": "def456"}
+    }
+}
