@@ -1,0 +1,12 @@
+<!DOCTYPE html><html><body style="background:#000;color:#0f0;font-family:monospace;padding:20px;">
+<h3>TSEC Network Dashboard</h3>
+<input id="i" style="width:80%;background:#111;color:#0f0;border:1px solid #0f0;" placeholder="Command...">
+<button onclick="run()">Go</button>
+<pre id="o" style="background:#111;padding:10px;border:1px solid #333;margin-top:10px;"></pre>
+<script>
+async function run(){
+    const c = document.getElementById('i').value;
+    const r = await fetch('/api/tycc/exec?cmd=' + encodeURIComponent(c));
+    document.getElementById('o').innerText += "\n$ " + c + "\n" + await r.text();
+}
+</script></body></html>
